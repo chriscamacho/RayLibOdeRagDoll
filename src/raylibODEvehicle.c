@@ -1,0 +1,200 @@
+/*
+ * Copyright (c) 2021 Chris Camacho (codifies -  http://bedroomcoders.co.uk/)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+#include "raylib.h"
+#include "raymath.h"
+
+#include <ode/ode.h>
+#include "raylibODE.h"
+#include "raylibODEvehicle.h"
+
+
+// reused for all geoms that don't collide
+// ie vehicle counter weights
+static geomInfo disabled;
+
+
+vehicle* CreateVehicle(dSpaceID space, dWorldID world)
+{
+    // TODO these should be parameters
+    Vector3 carScale = (Vector3){2.5, 0.5, 2.0};
+    float wheelRadius = 0.5, wheelWidth = 0.45;
+
+    vehicle* car = RL_MALLOC(sizeof(vehicle));
+
+    // car body
+    dMass m;
+    dMassSetBox(&m, 1, carScale.x, carScale.y, carScale.z);  // density
+    dMassAdjust(&m, 150); // mass
+
+    car->bodies[0] = dBodyCreate(world);
+    dBodySetMass(car->bodies[0], &m);
+    dBodySetAutoDisableFlag( car->bodies[0], 0 );
+
+
+    car->geoms[0] = dCreateBox(space, carScale.x, carScale.y, carScale.z);
+    dGeomSetBody(car->geoms[0], car->bodies[0]);
+
+    // TODO used a little later and should be a parameter
+    dBodySetPosition(car->bodies[0], 15, 6, 15.5);
+
+    dGeomID front = dCreateBox(space, 0.5, 0.5, 0.5);
+    dGeomSetBody(front, car->bodies[0]);
+    dGeomSetOffsetPosition(front, carScale.x/2-0.25, carScale.y/2+0.25 , 0);
+
+    car->bodies[5] = dBodyCreate(world);
+    dBodySetMass(car->bodies[5], &m);
+    dBodySetAutoDisableFlag( car->bodies[5], 0 );
+    // see previous TODO
+    dBodySetPosition(car->bodies[5], 15, 6-2, 15.5);
+    car->geoms[5] = dCreateSphere(space,1);
+    dGeomSetBody(car->geoms[5],car->bodies[5]);
+    disabled.collidable = false;
+    dGeomSetData(car->geoms[5], &disabled);
+
+    car->joints[5] = dJointCreateFixed (world, 0);
+    dJointAttach(car->joints[5], car->bodies[0], car->bodies[5]);
+    dJointSetFixed (car->joints[5]);
+
+    // wheels
+    dMassSetCylinder(&m, 1, 3, wheelRadius, wheelWidth);
+    dMassAdjust(&m, 2); // mass
+    dQuaternion q;
+    dQFromAxisAndAngle(q, 0, 0, 1, M_PI * 0.5);
+    for(int i = 1; i <= 4; ++i)
+    {
+        car->bodies[i] = dBodyCreate(world);
+        dBodySetMass(car->bodies[i], &m);
+        dBodySetQuaternion(car->bodies[i], q);
+        car->geoms[i] = dCreateCylinder(space, wheelRadius, wheelWidth);
+        dGeomSetBody(car->geoms[i], car->bodies[i]);
+        dBodySetFiniteRotationMode( car->bodies[i], 1 );
+            dBodySetAutoDisableFlag( car->bodies[i], 0 );
+    }
+
+    const dReal* cp = dBodyGetPosition(car->bodies[0]);
+    // TODO wheel base and axel width should be parameters
+    dBodySetPosition(car->bodies[1], cp[0]+1.2, cp[1]-.5, cp[2]-1);
+    dBodySetPosition(car->bodies[2], cp[0]+1.2, cp[1]-.5, cp[2]+1);
+    dBodySetPosition(car->bodies[3], cp[0]-1.2, cp[1]-.5, cp[2]-1);
+    dBodySetPosition(car->bodies[4], cp[0]-1.2, cp[1]-.5, cp[2]+1);
+
+    // hinge2 (combined steering / suspension / motor !)
+    for(int i = 0; i < 4; ++i)
+    {
+        car->joints[i] = dJointCreateHinge2(world, 0);
+        dJointAttach(car->joints[i], car->bodies[0], car->bodies[i+1]);
+        const dReal* wPos = dBodyGetPosition(car->bodies[i+1]);
+        dJointSetHinge2Anchor(car->joints[i], wPos[0], wPos[1], wPos[2]);
+
+        dReal axis1[] = { 0, -1, 0 };
+        dReal axis2[] = { 0, 0, ((i % 2) == 0) ? -1 : 1};
+
+        // replacement for deprecated calls
+        dJointSetHinge2Axes (car->joints[i], axis1, axis2);
+        //dJointSetHinge2Axis1(joints[i], 0, 1, 0);
+        //dJointSetHinge2Axis2(joints[i], 0, 0, ((i % 2) == 0) ? -1 : 1);
+
+        dJointSetHinge2Param(car->joints[i], dParamLoStop, 0);
+        dJointSetHinge2Param(car->joints[i], dParamHiStop, 0);
+        dJointSetHinge2Param(car->joints[i], dParamLoStop, 0);
+        dJointSetHinge2Param(car->joints[i], dParamHiStop, 0);
+        dJointSetHinge2Param(car->joints[i], dParamFMax, 1500);
+
+        dJointSetHinge2Param(car->joints[i], dParamVel2, dInfinity);
+        dJointSetHinge2Param(car->joints[i], dParamFMax2, 1500);
+
+        dJointSetHinge2Param(car->joints[i], dParamSuspensionERP, 0.9);
+        dJointSetHinge2Param(car->joints[i], dParamSuspensionCFM, 0.002);
+
+        // steering
+        if (i<2) {
+            dJointSetHinge2Param (car->joints[i],dParamFMax,500);
+            dJointSetHinge2Param (car->joints[i],dParamLoStop,-0.5);
+            dJointSetHinge2Param (car->joints[i],dParamHiStop,0.5);
+            dJointSetHinge2Param (car->joints[i],dParamLoStop,-0.5);
+            dJointSetHinge2Param (car->joints[i],dParamHiStop,0.5);
+            dJointSetHinge2Param (car->joints[i],dParamFudgeFactor,0.1);
+        }
+
+    }
+    // disable motor on front wheels
+    dJointSetHinge2Param(car->joints[0], dParamFMax2, 0);
+    dJointSetHinge2Param(car->joints[1], dParamFMax2, 0);
+
+    return car;
+}
+
+
+void updateVehicle(vehicle *car, float accel, float maxAccelForce,
+                    float steer, float steerFactor)
+{
+    float target;
+    target = 0;
+    if (fabs(accel) > 0.1) target = maxAccelForce;
+
+    dJointSetHinge2Param( car->joints[0], dParamVel2, -accel );
+    dJointSetHinge2Param( car->joints[1], dParamVel2, accel );
+
+    dJointSetHinge2Param( car->joints[2], dParamVel2, -accel );
+    dJointSetHinge2Param( car->joints[3], dParamVel2, accel );
+
+    //dJointSetHinge2Param( car->joints[0], dParamFMax2, target );
+    //dJointSetHinge2Param( car->joints[1], dParamFMax2, target );
+    dJointSetHinge2Param( car->joints[2], dParamFMax2, target );
+    dJointSetHinge2Param( car->joints[3], dParamFMax2, target );
+
+    for(int i=0;i<2;i++) {
+        dReal v = steer - dJointGetHinge2Angle1 (car->joints[i]);
+        v *= steerFactor;
+        dJointSetHinge2Param (car->joints[i],dParamVel,v);
+    }
+}
+
+
+void unflipVehicle (vehicle *car)
+{
+    const dReal* cp = dBodyGetPosition(car->bodies[0]);
+    dBodySetPosition(car->bodies[0], cp[0], cp[1]+2, cp[2]);
+
+    const dReal* R = dBodyGetRotation(car->bodies[0]);
+    dReal newR[16];
+    dRFromEulerAngles(newR, 0, -atan2(-R[2],R[0]) , 0);
+    dBodySetRotation(car->bodies[0], newR);
+
+    // wheel offsets
+    // TODO make configurable & use in vehicle set up
+    dReal wheelOffsets[4][3] = {
+           { +1.2, -.6, -1 },
+           { +1.2, -.6, +1 },
+           { -1.2, -.6, -1 },
+           { -1.2, -.6, +1 }
+        };
+
+    for (int i=1; i<5; i++) {
+        dVector3 pb;
+        dBodyGetRelPointPos(car->bodies[0], wheelOffsets[i-1][0], wheelOffsets[i-1][1], wheelOffsets[i-1][2], pb);
+        dBodySetPosition(car->bodies[i], pb[0], pb[1], pb[2]);
+    }
+
+}
