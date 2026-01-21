@@ -3,7 +3,7 @@ demonstrates using OpenDE and Raylib to create a simple ragdolls
 
 get ODE from https://bitbucket.org/odedevs/ode/downloads/
 
-extract ode 0.16.6 into the main directory of this project (as ode)
+extract ode 0.16.6 into a directory at the same level as this project (see below)
 
 ln -s ode-0.16.6 ode
 
