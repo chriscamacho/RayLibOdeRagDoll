@@ -17,8 +17,12 @@ note I have moved the ode location (so I can use it with other projects!)
 You file structure should look like this
 
 ode
+
 raylib
+
 RayLibOdeRagDoll
+
+
 
 please feel free to get in touch via bedroomcoders.co.uk
 
