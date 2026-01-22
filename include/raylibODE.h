@@ -21,6 +21,9 @@
  *
  */
  
+#ifndef RAYLIBODE_H
+#define RAYLIBODE_H
+
 #include "raylib.h"
 #include "raymath.h"
 
@@ -40,6 +43,27 @@ typedef struct geomInfo {
 // Helper to allocate geomInfo with collision flag, optional texture, and UV scale
 geomInfo* CreateGeomInfo(bool collidable, Texture* texture, float uvScaleU, float uvScaleV);
 
+// Object counts
+#define NUM_OBJ 50
+#define MAX_RAGDOLLS 12
+
+// Plane configuration
+#define PLANE_SIZE 100.0f
+#define PLANE_THICKNESS 1.0f
+
+// Forward declaration
+struct RagDoll;
+
+// Physics context - holds all physics state
+typedef struct PhysicsContext {
+    dWorldID world;
+    dSpaceID* space;              // Pointer to space (set by InitPhysics)
+    dJointGroupID contactgroup;
+    dBodyID obj[NUM_OBJ];
+    struct RagDoll* ragdolls[MAX_RAGDOLLS];
+    int ragdollCount;
+} PhysicsContext;
+
 // Forward declaration - GraphicsContext is defined in init.h
 struct GraphicsContext;
 
@@ -48,5 +72,7 @@ void drawGeom(dGeomID geom, struct GraphicsContext* ctx);
 
 // Random float in range [min, max]
 float rndf(float min, float max);
+
+#endif // RAYLIBODE_H
 
 

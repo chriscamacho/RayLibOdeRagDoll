@@ -115,6 +115,7 @@ PhysicsContext* InitPhysics(dSpaceID* space, GraphicsContext* gfxCtx)
     ctx->world = dWorldCreate();
     printf("phys iterations per step %i\n", dWorldGetQuickStepNumIterations(ctx->world));
     *space = dHashSpaceCreate(NULL);
+    ctx->space = space;  // Store space pointer for cleanup
     ctx->contactgroup = dJointGroupCreate(0);
     dWorldSetGravity(ctx->world, 0, -9.8, 0);
 
@@ -214,7 +215,7 @@ void CleanupPhysics(PhysicsContext* ctx)
     // Free ragdolls
     for (int i = 0; i < ctx->ragdollCount; i++) {
         if (ctx->ragdolls[i]) {
-            FreeRagdoll(ctx->ragdolls[i]);
+            FreeRagdoll(ctx->ragdolls[i], ctx);
         }
     }
 

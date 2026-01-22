@@ -26,25 +26,8 @@
 
 #include "raylib.h"
 #include <ode/ode.h>
-#include "raylibODEragdoll.h"
+#include "raylibODE.h"
 #include "rlights.h"
-
-// Object counts
-#define NUM_OBJ 50
-#define MAX_RAGDOLLS 12
-
-// Plane configuration
-#define PLANE_SIZE 100.0f
-#define PLANE_THICKNESS 1.0f
-
-// Physics context - holds all physics state
-typedef struct PhysicsContext {
-    dWorldID world;
-    dJointGroupID contactgroup;
-    dBodyID obj[NUM_OBJ];
-    RagDoll* ragdolls[MAX_RAGDOLLS];
-    int ragdollCount;
-} PhysicsContext;
 
 // Graphics context - holds all rendering resources
 typedef struct GraphicsContext {

@@ -205,7 +205,7 @@ int main(void)
                 const dReal* pos = dBodyGetPosition(physCtx->ragdolls[i]->bodies[RAGDOLL_TORSO]);
                 if (pos[1] < -10) {
                     // Re-create rag doll at a new random spawn position
-                    FreeRagdoll(physCtx->ragdolls[i]);
+                    FreeRagdoll(physCtx->ragdolls[i], physCtx);
                     physCtx->ragdolls[i] = CreateRagdoll(space, physCtx->world, GetRagdollSpawnPosition(), &graphics);
                 }
             }

@@ -64,7 +64,7 @@ struct GraphicsContext;
 RagDoll* CreateRagdoll(dSpaceID space, dWorldID world, Vector3 position, struct GraphicsContext* ctx);
 void UpdateRagdollMotors(RagDoll *ragdoll, float *motorForces);
 void DrawRagdoll(RagDoll *ragdoll, struct GraphicsContext* ctx);
-void FreeRagdoll(RagDoll *ragdoll);
+void FreeRagdoll(RagDoll *ragdoll, PhysicsContext *ctx);
 
 // Ragdoll spawn configuration
 #define RAGDOLL_SPAWN_CENTER_X 0.0f

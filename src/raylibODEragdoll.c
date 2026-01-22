@@ -343,12 +343,52 @@ void DrawRagdoll(RagDoll *ragdoll, struct GraphicsContext* ctx)
     }
 }
 
-// TODO verify with valgrind not missing anything
-// Free rag doll resources
-void FreeRagdoll(RagDoll *ragdoll)
+// Free rag doll resources - properly destroys ODE objects before freeing wrapper arrays
+void FreeRagdoll(RagDoll *ragdoll, PhysicsContext *ctx)
 {
     if (!ragdoll) return;
 
+    // Destroy ODE bodies and their geoms
+    if (ragdoll->bodies) {
+        for (int i = 0; i < ragdoll->bodyCount; i++) {
+            if (ragdoll->bodies[i]) {
+                // Remove geom from space before destroying body
+                if (ragdoll->geoms && ragdoll->geoms[i] && ctx->space) {
+                    dSpaceRemove(*ctx->space, ragdoll->geoms[i]);
+                }
+                dBodyDestroy(ragdoll->bodies[i]);
+            }
+        }
+    }
+
+    // Destroy ODE geoms (indexed by bodyCount)
+    if (ragdoll->geoms) {
+        for (int i = 0; i < ragdoll->bodyCount; i++) {
+            if (ragdoll->geoms[i]) {
+                dGeomDestroy(ragdoll->geoms[i]);
+            }
+        }
+    }
+
+    // Destroy ODE joints (indexed by jointCount)
+    if (ragdoll->joints) {
+        for (int i = 0; i < ragdoll->jointCount; i++) {
+            if (ragdoll->joints[i]) {
+                dJointDestroy(ragdoll->joints[i]);
+            }
+        }
+    }
+
+    // Destroy ODE motors (indexed by jointCount)
+    if (ragdoll->motors) {
+        for (int i = 0; i < ragdoll->motorCount; i++) {
+            if (ragdoll->motors[i]) {
+                dJointDestroy(ragdoll->motors[i]);
+            }
+        }
+    }
+
+    // Free wrapper arrays
     if (ragdoll->bodies) RL_FREE(ragdoll->bodies);
     if (ragdoll->geoms) RL_FREE(ragdoll->geoms);
     if (ragdoll->joints) RL_FREE(ragdoll->joints);
