@@ -100,7 +100,13 @@ void drawGeom(dGeomID geom, struct GraphicsContext* ctx) {
         dGeomCylinderGetParams (geom, &r, &l);
         size[0] = size[1] = r*2;
         size[2] = l;
-    }
+    } else if (class == dCapsuleClass) {
+        m = &ctx->cylinder;
+        dReal l,r;
+        dGeomCapsuleGetParams (geom, &r, &l);
+        size[0] = size[1] = r*2;
+        size[2] = l;
+	}
     if (!m) return;
 
     Matrix matScale = MatrixScale(size[0], size[1], size[2]);

@@ -126,7 +126,7 @@ PhysicsContext* InitPhysics(dSpaceID* space, GraphicsContext* gfxCtx)
 
     // Create ground "plane"
     dGeomID planeGeom = dCreateBox(*space, PLANE_SIZE, PLANE_THICKNESS, PLANE_SIZE);
-    dGeomSetPosition(planeGeom, 0, -PLANE_THICKNESS, 0);
+    dGeomSetPosition(planeGeom, 0, -PLANE_THICKNESS / 2.0, 0);
     dGeomSetData(planeGeom, CreateGeomInfo(true, &gfxCtx->groundTexture, 25.0f, 25.0f));
 
     // Create random simple objects with random textures

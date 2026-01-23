@@ -70,8 +70,8 @@ void FreeRagdoll(RagDoll *ragdoll, PhysicsContext *ctx);
 #define RAGDOLL_SPAWN_CENTER_X 0.0f
 #define RAGDOLL_SPAWN_CENTER_Z 0.0f
 #define RAGDOLL_SPAWN_HALF_EXTENT 3.0f
-#define RAGDOLL_SPAWN_MIN_Y 0.0f
-#define RAGDOLL_SPAWN_MAX_Y 1.0f
+#define RAGDOLL_SPAWN_MIN_Y 0.6f
+#define RAGDOLL_SPAWN_MAX_Y 1.6f
 
 // Get a random spawn position within the defined ragdoll spawn volume
 Vector3 GetRagdollSpawnPosition(void);

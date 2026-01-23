@@ -107,7 +107,9 @@ RagDoll* CreateRagdoll(dSpaceID space, dWorldID world, Vector3 position, struct 
     dMassAdjust(&m, 3.0f);
     ragdoll->bodies[RAGDOLL_LEFT_UPPER_ARM] = dBodyCreate(world);
     dBodySetMass(ragdoll->bodies[RAGDOLL_LEFT_UPPER_ARM], &m);
-    ragdoll->geoms[RAGDOLL_LEFT_UPPER_ARM] = dCreateCylinder(space, armRadius, armLength);
+    //ragdoll->geoms[RAGDOLL_LEFT_UPPER_ARM] = dCreateCylinder(space, armRadius, armLength);
+    ragdoll->geoms[RAGDOLL_LEFT_UPPER_ARM] = dCreateCapsule(space, armRadius, armLength);
+    
     dGeomSetBody(ragdoll->geoms[RAGDOLL_LEFT_UPPER_ARM], ragdoll->bodies[RAGDOLL_LEFT_UPPER_ARM]);
     dGeomSetOffsetWorldRotation(ragdoll->geoms[RAGDOLL_LEFT_UPPER_ARM], R_arm);
     dBodySetPosition(ragdoll->bodies[RAGDOLL_LEFT_UPPER_ARM],
@@ -119,7 +121,8 @@ RagDoll* CreateRagdoll(dSpaceID space, dWorldID world, Vector3 position, struct 
     dMassAdjust(&m, 3.0f);
     ragdoll->bodies[RAGDOLL_LEFT_LOWER_ARM] = dBodyCreate(world);
     dBodySetMass(ragdoll->bodies[RAGDOLL_LEFT_LOWER_ARM], &m);
-    ragdoll->geoms[RAGDOLL_LEFT_LOWER_ARM] = dCreateCylinder(space, armRadius, armLength);
+    //ragdoll->geoms[RAGDOLL_LEFT_LOWER_ARM] = dCreateCylinder(space, armRadius, armLength);
+    ragdoll->geoms[RAGDOLL_LEFT_LOWER_ARM] = dCreateCapsule(space, armRadius, armLength);
     dGeomSetBody(ragdoll->geoms[RAGDOLL_LEFT_LOWER_ARM], ragdoll->bodies[RAGDOLL_LEFT_LOWER_ARM]);
     dGeomSetOffsetWorldRotation(ragdoll->geoms[RAGDOLL_LEFT_LOWER_ARM], R_arm);
     dBodySetPosition(ragdoll->bodies[RAGDOLL_LEFT_LOWER_ARM],
@@ -131,7 +134,8 @@ RagDoll* CreateRagdoll(dSpaceID space, dWorldID world, Vector3 position, struct 
     dMassAdjust(&m, 3.0f);
     ragdoll->bodies[RAGDOLL_RIGHT_UPPER_ARM] = dBodyCreate(world);
     dBodySetMass(ragdoll->bodies[RAGDOLL_RIGHT_UPPER_ARM], &m);
-    ragdoll->geoms[RAGDOLL_RIGHT_UPPER_ARM] = dCreateCylinder(space, armRadius, armLength);
+    //ragdoll->geoms[RAGDOLL_RIGHT_UPPER_ARM] = dCreateCylinder(space, armRadius, armLength);
+    ragdoll->geoms[RAGDOLL_RIGHT_UPPER_ARM] = dCreateCapsule(space, armRadius, armLength);
     dGeomSetBody(ragdoll->geoms[RAGDOLL_RIGHT_UPPER_ARM], ragdoll->bodies[RAGDOLL_RIGHT_UPPER_ARM]);
     dGeomSetOffsetWorldRotation(ragdoll->geoms[RAGDOLL_RIGHT_UPPER_ARM], R_arm);
     dBodySetPosition(ragdoll->bodies[RAGDOLL_RIGHT_UPPER_ARM],
@@ -143,7 +147,8 @@ RagDoll* CreateRagdoll(dSpaceID space, dWorldID world, Vector3 position, struct 
     dMassAdjust(&m, 3.0f);
     ragdoll->bodies[RAGDOLL_RIGHT_LOWER_ARM] = dBodyCreate(world);
     dBodySetMass(ragdoll->bodies[RAGDOLL_RIGHT_LOWER_ARM], &m);
-    ragdoll->geoms[RAGDOLL_RIGHT_LOWER_ARM] = dCreateCylinder(space, armRadius, armLength);
+    //ragdoll->geoms[RAGDOLL_RIGHT_LOWER_ARM] = dCreateCylinder(space, armRadius, armLength);
+    ragdoll->geoms[RAGDOLL_RIGHT_LOWER_ARM] = dCreateCapsule(space, armRadius, armLength);
     dGeomSetBody(ragdoll->geoms[RAGDOLL_RIGHT_LOWER_ARM], ragdoll->bodies[RAGDOLL_RIGHT_LOWER_ARM]);
     dGeomSetOffsetWorldRotation(ragdoll->geoms[RAGDOLL_RIGHT_LOWER_ARM], R_arm);
     dBodySetPosition(ragdoll->bodies[RAGDOLL_RIGHT_LOWER_ARM],
@@ -161,7 +166,8 @@ RagDoll* CreateRagdoll(dSpaceID space, dWorldID world, Vector3 position, struct 
     dMassAdjust(&m, 8.0f);
     ragdoll->bodies[RAGDOLL_LEFT_UPPER_LEG] = dBodyCreate(world);
     dBodySetMass(ragdoll->bodies[RAGDOLL_LEFT_UPPER_LEG], &m);
-    ragdoll->geoms[RAGDOLL_LEFT_UPPER_LEG] = dCreateCylinder(space, legRadius, legLength);
+    //ragdoll->geoms[RAGDOLL_LEFT_UPPER_LEG] = dCreateCylinder(space, legRadius, legLength);
+    ragdoll->geoms[RAGDOLL_LEFT_UPPER_LEG] = dCreateCapsule(space, legRadius, legLength);
     dGeomSetBody(ragdoll->geoms[RAGDOLL_LEFT_UPPER_LEG], ragdoll->bodies[RAGDOLL_LEFT_UPPER_LEG]);
     dGeomSetOffsetWorldRotation(ragdoll->geoms[RAGDOLL_LEFT_UPPER_LEG], R_leg);
     dBodySetPosition(ragdoll->bodies[RAGDOLL_LEFT_UPPER_LEG],
@@ -173,7 +179,8 @@ RagDoll* CreateRagdoll(dSpaceID space, dWorldID world, Vector3 position, struct 
     dMassAdjust(&m, 8.0f);
     ragdoll->bodies[RAGDOLL_LEFT_LOWER_LEG] = dBodyCreate(world);
     dBodySetMass(ragdoll->bodies[RAGDOLL_LEFT_LOWER_LEG], &m);
-    ragdoll->geoms[RAGDOLL_LEFT_LOWER_LEG] = dCreateCylinder(space, legRadius, legLength);
+    //ragdoll->geoms[RAGDOLL_LEFT_LOWER_LEG] = dCreateCylinder(space, legRadius, legLength);
+    ragdoll->geoms[RAGDOLL_LEFT_LOWER_LEG] = dCreateCapsule(space, legRadius, legLength);
     dGeomSetBody(ragdoll->geoms[RAGDOLL_LEFT_LOWER_LEG], ragdoll->bodies[RAGDOLL_LEFT_LOWER_LEG]);
     dGeomSetOffsetWorldRotation(ragdoll->geoms[RAGDOLL_LEFT_LOWER_LEG], R_leg);
     dBodySetPosition(ragdoll->bodies[RAGDOLL_LEFT_LOWER_LEG],
@@ -185,7 +192,8 @@ RagDoll* CreateRagdoll(dSpaceID space, dWorldID world, Vector3 position, struct 
     dMassAdjust(&m, 8.0f);
     ragdoll->bodies[RAGDOLL_RIGHT_UPPER_LEG] = dBodyCreate(world);
     dBodySetMass(ragdoll->bodies[RAGDOLL_RIGHT_UPPER_LEG], &m);
-    ragdoll->geoms[RAGDOLL_RIGHT_UPPER_LEG] = dCreateCylinder(space, legRadius, legLength);
+    //ragdoll->geoms[RAGDOLL_RIGHT_UPPER_LEG] = dCreateCylinder(space, legRadius, legLength);
+    ragdoll->geoms[RAGDOLL_RIGHT_UPPER_LEG] = dCreateCapsule(space, legRadius, legLength);
     dGeomSetBody(ragdoll->geoms[RAGDOLL_RIGHT_UPPER_LEG], ragdoll->bodies[RAGDOLL_RIGHT_UPPER_LEG]);
     dGeomSetOffsetWorldRotation(ragdoll->geoms[RAGDOLL_RIGHT_UPPER_LEG], R_leg);
     dBodySetPosition(ragdoll->bodies[RAGDOLL_RIGHT_UPPER_LEG],
@@ -197,7 +205,8 @@ RagDoll* CreateRagdoll(dSpaceID space, dWorldID world, Vector3 position, struct 
     dMassAdjust(&m, 8.0f);
     ragdoll->bodies[RAGDOLL_RIGHT_LOWER_LEG] = dBodyCreate(world);
     dBodySetMass(ragdoll->bodies[RAGDOLL_RIGHT_LOWER_LEG], &m);
-    ragdoll->geoms[RAGDOLL_RIGHT_LOWER_LEG] = dCreateCylinder(space, legRadius, legLength);
+    //ragdoll->geoms[RAGDOLL_RIGHT_LOWER_LEG] = dCreateCylinder(space, legRadius, legLength);
+    ragdoll->geoms[RAGDOLL_RIGHT_LOWER_LEG] = dCreateCapsule(space, legRadius, legLength);
     dGeomSetBody(ragdoll->geoms[RAGDOLL_RIGHT_LOWER_LEG], ragdoll->bodies[RAGDOLL_RIGHT_LOWER_LEG]);
     dGeomSetOffsetWorldRotation(ragdoll->geoms[RAGDOLL_RIGHT_LOWER_LEG], R_leg);
     dBodySetPosition(ragdoll->bodies[RAGDOLL_RIGHT_LOWER_LEG],
