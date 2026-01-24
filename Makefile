@@ -1,5 +1,5 @@
 
-APPNAME:=$(shell basename `pwd`)
+APPNAME := $(notdir $(CURDIR)) 
 
 INSTR:= -fsanitize=address,leak,undefined,pointer-compare,pointer-subtract
 INSTR+= -fno-omit-frame-pointer
@@ -39,7 +39,6 @@ inst: LDFLAGS+= $(INSTR)
 inst: 
 	@echo "*** made INSTRUMENTATION target ***"
 
-release: CFLAGS+= -Ofast
 
 debug release inst: $(APPNAME)
 
